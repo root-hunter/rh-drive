@@ -1,0 +1,4 @@
+<h1><%= @document.file.filename %></h1>  <!-- Supponendo che il documento abbia un titolo -->
+<%= link_to 'Download', url_for(@document.file) if @document.file.attached? %>
+<%= link_to 'Edit', edit_document_path(@document) %>
+<%= link_to 'Back', documents_path %>

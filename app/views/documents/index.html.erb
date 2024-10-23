@@ -1,0 +1,18 @@
+<h1>Uploaded Files</h1>
+
+<% if @documents.any? %>
+  <ul>
+    <% @documents.each do |document| %>
+      <li>
+        <%= document.file.filename %> <!-- Display the filename -->
+        <%= link_to 'Download', url_for(document.file) %>
+        <%= link_to 'Detail', url_for(controller: 'documents', action: 'show', id: document.id) %>
+        <%= link_to 'JSON', url_for(controller: 'documents', action: 'show', id: document.id, format: :json) %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No files have been uploaded yet.</p>
+<% end %>
+
+<%= link_to 'Upload New File', new_document_path %> <!-- Link to the new upload form -->
