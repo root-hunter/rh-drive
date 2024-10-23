@@ -1,0 +1,1 @@
+pin "documents_table", to: "documents_table.js"
