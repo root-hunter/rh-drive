@@ -24,8 +24,6 @@ const formatDateColumn = (columnName) => (_data, _type, row) => {
     const isoDate = row[columnName];
     const date = new Date(isoDate);
 
-    console.log(row)
-
     const formattedDate = date.toLocaleDateString();
     const formattedTime = date.toLocaleTimeString();
 

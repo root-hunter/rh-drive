@@ -96,10 +96,10 @@ document.addEventListener("DOMContentLoaded", function () {
                         body: JSON.stringify(request)
                     }
                 );
+                console.log(request)
 
                 let json = await response.json();
 
-                console.log(request)
                 console.log(json)
 
                 cacheLastJson = JSON.parse(JSON.stringify(json));
@@ -171,5 +171,6 @@ document.addEventListener("DOMContentLoaded", function () {
         processing: true,
         serverSide: true,
         select: true,
+        order: [[1, "asc"]]
     });
 });
