@@ -98,20 +98,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 );
                 console.log(request)
 
-                let json = await response.json();
+                let result = await response.json();
 
-                console.log(json)
+                console.log(documentsTableSettings)
 
-                cacheLastJson = JSON.parse(JSON.stringify(json));
+                cacheLastJson = JSON.parse(JSON.stringify(result));
 
                 if (cacheLower != drawStart) {
-                    json.data.splice(0, drawStart - cacheLower);
+                    result.data.splice(0, drawStart - cacheLower);
                 }
                 if (requestLength >= -1) {
-                    json.data.splice(requestLength, json.data.length);
+                    result.data.splice(requestLength, result.data.length);
                 }
 
-                drawCallback(json);
+                drawCallback(result);
             }
             else {
                 json = JSON.parse(JSON.stringify(cacheLastJson));
@@ -133,16 +133,51 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     const documentsTable = new DataTable('#table-documents', {
+        lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
         ajax: DataTable.pipeline({
             url: '/documents/query',
             pages: 10
         }),
+        layout: {
+            top1Start: {
+                buttons: [
+                    {
+                        extend: 'copyHtml5',
+                        className: 'btn btn-secondary',
+                        exportOptions: {
+                            columns: ':not(.notexport)'
+                        },
+                        split: [
+                            {
+                                extend: 'pdfHtml5',
+                                exportOptions: {
+                                    columns: ':not(.notexport)'
+                                }       
+                            },
+                            {
+                                extend: 'excelHtml5',
+                                exportOptions: {
+                                    columns: ':not(.notexport)'
+                                }       
+                            },
+                            {
+                                extend: 'csvHtml5',
+                                exportOptions: {
+                                    columns: ':not(.notexport)'
+                                }       
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
         columns: [
             {
                 data: null,
                 orderable: false,
                 searchable: false,
-                render: DataTable.render.select()},
+                render: DataTable.render.select()
+            },
             {
                 name: "id",
                 render: formatTextColumn("id")
@@ -173,4 +208,6 @@ document.addEventListener("DOMContentLoaded", function () {
         select: true,
         order: [[1, "asc"]]
     });
+
+    const documentsTableSettings = documentsTable.settings();
 });

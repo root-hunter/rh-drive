@@ -1,20 +1,21 @@
 <h1>Uploaded Files</h1>
 
 <table id="table-documents" class="m-3">
-  <thead>
-    <tr>
-      <th></th>
-      <th>ID</th>
-      <th>FILENAME</th>
-      <th>TYPE</th>
-      <th>SIZE</th>
-      <th>CREATED AT</th>
-      <th>UPDATED AT</th>
-    </tr>
-  </thead>
-  <tbody>
-  </tbody>
+    <thead>
+      <tr>
+        <th class="notexport"></th>
+        <th>ID</th>
+        <th>FILENAME</th>
+        <th>TYPE</th>
+        <th>SIZE</th>
+        <th>CREATED AT</th>
+        <th>UPDATED AT</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
 </table>
+
 
 <%= link_to 'Upload New File', new_document_path %>
 <%= javascript_include_tag "documents_table.js" %>

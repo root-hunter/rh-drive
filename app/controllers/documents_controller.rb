@@ -9,9 +9,11 @@ class DocumentsController < ApplicationController
     start = params[:start].to_i
     length = params[:length].to_i
     search_value = params.dig(:search, :value)
+    #fields = params[:columns].map { |column| column[:name] }
+    fields = ["filename", "type", "size", "created_at", "updated_at"]
 
     order_by = params.dig(:order, 0, :name) || 'id'
-    order_direction = params.dig(:order, 0, :dir) || 'asc' # Default to 'asc' if no direction is provided
+    order_direction = params.dig(:order, 0, :dir) || 'asc'
 
     @documents = Document.all
     total = @documents.count
@@ -21,7 +23,7 @@ class DocumentsController < ApplicationController
     end
 
     @documents = @documents.map.with_index do |document, index|
-      get_metadata(document, index)
+      get_metadata(document)
     end
 
     if search_value.present?
@@ -31,52 +33,16 @@ class DocumentsController < ApplicationController
         document[:type].downcase.include?(search_value.downcase)
       end
     end
+    total_filtered = @documents.count
 
-    if order_by == "filename"
-      @documents = @documents.sort_by do |document|
-        [document[:filename]]
-      end
-
-      if order_direction.to_s.downcase == "desc"
-        @documents = @documents.reverse
-      end
-    elsif order_by == "type"
-      @documents = @documents.sort_by do |document|
-        [document[:type]]
-      end
-
-      if order_direction.to_s.downcase == "desc"
-        @documents = @documents.reverse
-      end
-    elsif order_by == "size"
-      @documents = @documents.sort_by do |document|
-        [document[:size]]
-      end
-
-      if order_direction.to_s.downcase == "desc"
-        @documents = @documents.reverse
-      end
-    elsif order_by == "created_at"
-      @documents = @documents.sort_by do |document|
-        [document[:created_at]]
-      end
-
-      if order_direction.to_s.downcase == "desc"
-        @documents = @documents.reverse
-      end
-    elsif order_by == "updated_at"
-      @documents = @documents.sort_by do |document|
-        [document[:updated_at]]
-      end
-
-      if order_direction.to_s.downcase == "desc"
-        @documents = @documents.reverse
-      end
+    if fields.include?(order_by)
+      @documents = order_documents(@documents, order_by, order_direction)
     end
 
-    total_filtered = @documents.count
-    @documents = @documents[start, length]
-
+    if length > 0
+      @documents = @documents[start, length]
+    end
+ 
     output = {
       draw: draw,
       recordsTotal: total,
@@ -131,9 +97,9 @@ class DocumentsController < ApplicationController
     params.require(:document).permit(:file)
   end
 
-  def get_metadata(document, index)
+  def get_metadata(document)
     {
-      DT_RowId: "row_#{index}",
+      DT_RowId: "row_#{document.id}",
       id: document.id,
       filename: document.file.filename.to_s,
       type: document.file.content_type,
@@ -142,5 +108,17 @@ class DocumentsController < ApplicationController
       updated_at: document.updated_at,
       url: url_for(document.file)
     }
+  end
+
+  def order_documents(documents, order_by, order_direction)
+    documents = @documents.sort_by do |document|
+      [document[order_by.to_sym]]
+    end
+
+    if order_direction.to_s.downcase == "desc"
+      documents = documents.reverse
+    end
+
+    return documents
   end
 end
