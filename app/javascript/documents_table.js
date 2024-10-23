@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 url: '', // script url
                 data: null, // function or object with parameters to send to the server
                 // matching how `ajax.data` works in DataTables
-                method: 'GET' // Ajax HTTP method
+                method: 'POST' // Ajax HTTP method
             },
             opts
         );
@@ -83,13 +83,17 @@ document.addEventListener("DOMContentLoaded", function () {
                     // As an object, the data given extends the default
                     Object.assign(request, conf.data);
                 }
-                
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
                 // Use `fetch` to make Ajax request
                 let response = await fetch(
-                    //conf.url + '.json' + JSON.stringify(request),
-                    `${conf.url}.json?draw=${request.draw}&start=${request.start}&length=${request.length}`,
+                    `${conf.url}.json`,
                     {
-                        method: conf.method
+                        method: conf.method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-Token': csrfToken  // Include the CSRF token in the headers
+                        },
+                        body: JSON.stringify(request)
                     }
                 );
 
@@ -128,13 +132,44 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-
     const documentsTable = new DataTable('#table-documents', {
         ajax: DataTable.pipeline({
-            url: '/documents',
-            pages: 1
+            url: '/documents/query',
+            pages: 10
         }),
+        columns: [
+            {
+                data: null,
+                orderable: false,
+                searchable: false,
+                render: DataTable.render.select()},
+            {
+                name: "id",
+                render: formatTextColumn("id")
+            },
+            {
+                name: "filename",
+                render: formatTextColumn("filename")
+            },
+            {
+                name: "type",
+                render: formatTextColumn("type")
+            },
+            {
+                name: "size",
+                render: formatByteColumn("size")
+            },
+            {
+                name: "created_at",
+                render: formatDateColumn("created_at"),
+            },
+            {
+                name: "updated_at",
+                render: formatDateColumn("updated_at"),
+            },
+        ],
         processing: true,
-        serverSide: true
+        serverSide: true,
+        select: true,
     });
 });

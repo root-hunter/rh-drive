@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   get "documents/home"
+  post "documents/query"
 
   devise_for :users
   resources :documents
