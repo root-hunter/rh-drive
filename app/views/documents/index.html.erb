@@ -1,10 +1,22 @@
 <h1>Uploaded Files</h1>
 
+<%= link_to 'Create New Folder', new_folder_path %>
+<%= link_to 'Upload File', new_document_path %>
+
+<select class="form-select" aria-label="Default select example">
+  <option selected>Select a folder</option>
+  <% @folders.each do |folder| %>
+      <option value=<%= folder.id %>><%= folder.path %></option>
+  <% end %>
+</select>
+
 <table id="table-documents" class="m-3">
     <thead>
       <tr>
         <th class="notexport"></th>
         <th>ID</th>
+        <th>FOLDER ID</th>
+        <th>FOLDER</th>
         <th>FILENAME</th>
         <th>TYPE</th>
         <th>SIZE</th>
@@ -17,5 +29,4 @@
 </table>
 
 
-<%= link_to 'Upload New File', new_document_path %>
 <%= javascript_include_tag "documents_table.js" %>

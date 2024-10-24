@@ -15,6 +15,10 @@ const formatTextColumn = (columnName) => (_data, _type, row) => {
     return text;
 };
 
+const formatLinkColumn = (url, columnId, columnName) => (_data, _type, row) => {
+    return `<a href="${url}/${row[columnId]}">${row[columnName]}</a>`;
+};
+
 const formatByteColumn = (columnName) => (_data, _type, row) => {
     const bytes = row[columnName];
     return `${formatBytes(bytes)}`;

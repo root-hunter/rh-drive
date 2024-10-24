@@ -2,7 +2,15 @@
 <p>Find me in app/views/documents/index.html.erb</p>
 
 <%= form_with model: @document, remote: true, multipart: true do |form| %>
-  <%= form.label :file %>
-  <%= form.file_field :file %>
+  <div class="field">
+    <%= form.label :file %>
+    <%= form.file_field :file %>
+  </div>
+  
+  <div class="field">
+    <%= form.label :folder_id, "Select Folder" %>
+    <%= form.collection_select :folder_id, @folders, :id, :path, prompt: "Choose a folder" %>
+  </div>
+
   <%= form.submit 'Upload File' %>
 <% end %>

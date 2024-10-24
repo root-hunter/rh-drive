@@ -142,6 +142,10 @@ document.addEventListener("DOMContentLoaded", function () {
             top1Start: {
                 buttons: [
                     {
+                        extend: 'colvis',
+                        columns: ':not(.notexport)'
+                    },
+                    {
                         extend: 'copyHtml5',
                         className: 'btn btn-secondary',
                         exportOptions: {
@@ -169,6 +173,16 @@ document.addEventListener("DOMContentLoaded", function () {
                         ]
                     }
                 ]
+            },
+            top1End: {
+                buttons: [
+                    {
+                        text: 'Clear cache',
+                        action: function (e, dt, node, config) {
+                            documentsTable.clearPipeline().draw()
+                        }
+                    }
+                ]
             }
         },
         columns: [
@@ -179,12 +193,23 @@ document.addEventListener("DOMContentLoaded", function () {
                 render: DataTable.render.select()
             },
             {
+                visible: false,
                 name: "id",
                 render: formatTextColumn("id")
             },
             {
+                visible: false,
+                name: "folder_id",
+                render: formatTextColumn("folder_id")
+            },
+            {
+                visible: false,
+                name: "folder_path",
+                render: formatTextColumn("folder_path")
+            },
+            {
                 name: "filename",
-                render: formatTextColumn("filename")
+                render: formatLinkColumn("/documents", "id", "filename")
             },
             {
                 name: "type",
@@ -196,6 +221,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             {
                 name: "created_at",
+                visible: false,
                 render: formatDateColumn("created_at"),
             },
             {
@@ -206,7 +232,10 @@ document.addEventListener("DOMContentLoaded", function () {
         processing: true,
         serverSide: true,
         select: true,
-        order: [[1, "asc"]]
+        order: [[3, "asc"]],
+        rowGroup: {
+            dataSrc: "folder_path"
+        }
     });
 
     const documentsTableSettings = documentsTable.settings();

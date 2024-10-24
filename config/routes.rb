@@ -1,9 +1,11 @@
 Rails.application.routes.draw do
+  devise_for :users, controllers: { registrations: 'users/registrations' }
+
   get "documents/home"
   post "documents/query"
 
-  devise_for :users
   resources :documents
+  resources :folders
 
   get "up" => "rails/health#show", as: :rails_health_check
 

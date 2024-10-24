@@ -1,0 +1,10 @@
+<h1>Create Folder</h1>
+
+<%= form_with model: @folder, remote: true, multipart: true do |form| %>
+  <div class="field">
+      <%= form.label :path %>
+    <%= form.text_field :path %>
+  </div>
+
+  <%= form.submit 'Add Folder' %>
+<% end %>

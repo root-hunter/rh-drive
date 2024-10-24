@@ -2,6 +2,7 @@ class DocumentsController < ApplicationController
   before_action :authenticate_user!
 
   def index
+    @folders = Folder.all
   end
 
   def query
@@ -9,10 +10,10 @@ class DocumentsController < ApplicationController
     start = params[:start].to_i
     length = params[:length].to_i
     search_value = params.dig(:search, :value)
-    #fields = params[:columns].map { |column| column[:name] }
-    fields = ["filename", "type", "size", "created_at", "updated_at"]
+    fields = params[:columns].map { |column| column[:name] }
+    #fields = ["filename", "type", "size", "created_at", "updated_at"]
 
-    order_by = params.dig(:order, 0, :name) || 'id'
+    order_by = params.dig(:order, 0, :name) || 'folder_id'
     order_direction = params.dig(:order, 0, :dir) || 'asc'
 
     @documents = Document.all
@@ -22,7 +23,7 @@ class DocumentsController < ApplicationController
       @documents = @documents.order("#{order_by} #{order_direction}")
     end
 
-    @documents = @documents.map.with_index do |document, index|
+    @documents = @documents.map do |document|
       get_metadata(document)
     end
 
@@ -59,6 +60,7 @@ class DocumentsController < ApplicationController
 
   def new
     @document = Document.new
+    @folders = Folder.all
   end
 
   def show
@@ -77,6 +79,7 @@ class DocumentsController < ApplicationController
   end
 
   def create
+    #@document = Document.new(document_params)
     @document = Document.new(document_params)
 
     respond_to do |format|
@@ -94,7 +97,7 @@ class DocumentsController < ApplicationController
   private
 
   def document_params
-    params.require(:document).permit(:file)
+    params.require(:document).permit(:folder_id, :file)
   end
 
   def get_metadata(document)
@@ -106,17 +109,21 @@ class DocumentsController < ApplicationController
       size: document.file.byte_size,
       created_at: document.created_at,
       updated_at: document.updated_at,
-      url: url_for(document.file)
+      folder_id: document.folder.id,
+      folder_path: document.folder.path,
+#      url: url_for(document.file?) || nil
     }
   end
 
   def order_documents(documents, order_by, order_direction)
-    documents = @documents.sort_by do |document|
-      [document[order_by.to_sym]]
-    end
-
     if order_direction.to_s.downcase == "desc"
-      documents = documents.reverse
+      documents = @documents.sort_by do |document|
+        [-document[order_by.to_sym]]
+      end
+    else
+      documents = @documents.sort_by do |document|
+        [document[order_by.to_sym]]
+      end
     end
 
     return documents
