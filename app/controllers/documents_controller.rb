@@ -2,7 +2,7 @@ class DocumentsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @folders = Folder.all
+    @folders = current_user.folders
   end
 
   def query
@@ -16,7 +16,7 @@ class DocumentsController < ApplicationController
     order_by = params.dig(:order, 0, :name) || 'folder_id'
     order_direction = params.dig(:order, 0, :dir) || 'asc'
 
-    @documents = Document.all
+    @documents = current_user.documents 
     total = @documents.count
 
     if order_by == 'id'
@@ -59,8 +59,8 @@ class DocumentsController < ApplicationController
   end
 
   def new
-    @document = Document.new
-    @folders = Folder.all
+    @document = current_user.documents
+    @folders = current_user.folders
   end
 
   def show

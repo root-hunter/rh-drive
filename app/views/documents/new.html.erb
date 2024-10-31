@@ -4,12 +4,12 @@
 <%= form_with model: @document, remote: true, multipart: true do |form| %>
   <div class="field">
     <%= form.label :file %>
-    <%= form.file_field :file %>
+    <%= form.file_field :file, required: true %>
   </div>
   
   <div class="field">
     <%= form.label :folder_id, "Select Folder" %>
-    <%= form.collection_select :folder_id, @folders, :id, :path, prompt: "Choose a folder" %>
+    <%= form.collection_select :folder_id, @folders, :id, :path, prompt: "Choose a folder", required: true %>
   </div>
 
   <%= form.submit 'Upload File' %>

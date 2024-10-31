@@ -2,7 +2,7 @@ class FoldersController < ApplicationController
     before_action :authenticate_user!
     
     def index
-        @folders = Folder.all
+        @folders = current_user.folders
     end
 
     def new
